@@ -1,0 +1,2074 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>EatSweet — Home</title>
+    <style>
+      :root {
+        --accent: #ff7f69;
+        --maroon: #7a1f2f;
+        --pink-bg: #fff5f4;
+        --muted: #6b6b6b;
+        --max-width: 1150px;
+        --nav-h: 76px;
+        font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto,
+          "Helvetica Neue", Arial;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--pink-bg);
+        color: var(--maroon);
+      }
+
+      /* page wrapper */
+      .page {
+        max-width: var(--max-width);
+        margin: 0 auto;
+        padding: 20px;
+      }
+
+      /* Floating navbar wrapper (sticky) */
+      .floating-nav-wrap {
+        position: sticky;
+        top: 18px;
+        z-index: 60;
+        display: flex;
+        justify-content: center;
+      }
+      .floating-inner {
+        position: relative;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+      }
+
+      /* the rounded navbar */
+      .floating-nav {
+        width: calc(100% - 40px);
+        height: var(--nav-h);
+        background: rgba(255, 255, 255, 0.98);
+        backdrop-filter: blur(6px);
+        border-radius: 14px;
+        box-shadow: 0 10px 30px rgba(122, 31, 47, 0.08);
+        display: flex;
+        align-items: center;
+        position: relative;
+        padding: 0 12px;
+        max-width: var(--max-width);
+      }
+
+      /* nav regions - left, center, right */
+      .nav-left,
+      .nav-right {
+        display: flex;
+        gap: 52px;
+        align-items: center;
+        flex: 1;
+      }
+      .nav-left {
+        justify-content: flex-start;
+        padding-left: 20px;
+        padding-right: 14px;
+      }
+      .nav-right {
+        justify-content: flex-end;
+        padding-right: 20px;
+        padding-left: 14px;
+      }
+      .nav-left a,
+      .nav-right a {
+        color: var(--maroon);
+        text-decoration: none;
+        font-weight: 800;
+      }
+
+      /* center logo block */
+      .nav-center {
+        flex: 0;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        position: relative;
+      }
+      .logo-wrap {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .logo-img {
+        height: 40px;
+        width: auto;
+        display: block;
+      }
+      .logo-text {
+        line-height: 1;
+        font-weight: 900;
+        color: var(--maroon);
+      }
+      .logo-text .line1 {
+        display: block;
+        font-size: 16px;
+      }
+      .logo-text .line2 {
+        display: block;
+        font-size: 16px;
+      }
+
+      /* Cart button OUTSIDE nav but inside sticky wrapper, positioned to extreme right outside the rounded bar */
+      .cart-outside {
+        position: absolute;
+        right: 12px;
+        top: calc(var(--nav-h) + 8px);
+        z-index: 70;
+        display: flex;
+        align-items: center;
+      }
+      .cart-btn {
+        background: linear-gradient(180deg, var(--accent), #ffb493);
+        border-radius: 14px;
+        padding: 12px 14px;
+        border: 0;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 800;
+        color: white;
+        cursor: pointer;
+        box-shadow: 0 12px 30px rgba(122, 31, 47, 0.14);
+      }
+      .cart-count {
+        background: rgba(255, 255, 255, 0.12);
+        padding: 4px 8px;
+        border-radius: 999px;
+        font-weight: 900;
+      }
+
+      /* Hero spacing to account for sticky nav */
+      header {
+        height: 0;
+      }
+
+      /* rest of layout - simplified for focus */
+      .hero {
+        display: grid;
+        grid-template-columns: 1fr 520px;
+        gap: 32px;
+        align-items: center;
+        padding: 12px 0 48px;
+      }
+      .headline {
+        font-size: 86px;
+        line-height: 0.95;
+        font-weight: 900;
+        margin: 0;
+      }
+      .eyebrow {
+        display: none;
+      }
+
+      @media (max-width: 900px) {
+        .floating-nav {
+          width: calc(100% - 28px);
+          height: 64px;
+          padding: 0 12px;
+        }
+        .logo-img {
+          width: 56px;
+          height: 34px;
+        }
+        .logo-text .line1,
+        .logo-text .line2 {
+          font-size: 14px;
+        }
+        .hero {
+          grid-template-columns: 1fr;
+        }
+        .nav-left {
+          display: none;
+        }
+        .nav-right {
+          display: none;
+        }
+        .cart-outside {
+          right: 8px;
+          top: calc(var(--nav_h) + 6px);
+        }
+        .headline {
+          font-size: 40px;
+        }
+        .eyebrow {
+          font-size: 18px;
+        }
+      }
+
+      /* product / premium card tweaks */
+      .product-card img,
+      .premium-card img {
+        border-radius: 8px;
+        background: #d9d9d9;
+        display: block;
+      }
+
+      /* ensure add button keeps the intended accent style (high specificity + !important protects against other rules) */
+      .add-btn {
+        background: var(--accent) !important;
+        color: white !important;
+        padding: 10px 14px;
+        border-radius: 10px;
+        border: 0 !important;
+        font-weight: 800;
+        cursor: pointer;
+        box-shadow: none !important;
+      }
+      .add-btn:active,
+      .add-btn:focus {
+        outline: none;
+        transform: translateY(0);
+      }
+
+      .counter-ui button {
+        background: white;
+        border: 1px solid rgba(0, 0, 0, 0.06);
+        padding: 8px 10px;
+        border-radius: 8px;
+        cursor: pointer;
+      }
+      .orig-add-btn {
+        display: none;
+      }
+
+      /* qty controls used when item has been added */
+      .qty-controls {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: #ffe3dd;
+        padding: 6px 8px;
+        border-radius: 10px;
+        font-weight: 800;
+        color: var(--maroon);
+      }
+      .qty-btn {
+        background: var(--accent);
+        color: white;
+        border: 0;
+        width: 28px;
+        height: 28px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 900;
+        font-size: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      /* Cart drawer styles */
+      .cart-drawer {
+        position: fixed;
+        right: 0;
+        top: 0;
+        height: 100vh;
+        width: 360px;
+        max-width: 90vw;
+        background: white;
+        box-shadow: -24px 0 60px rgba(122, 31, 47, 0.12);
+        transform: translateX(100%);
+        transition: transform 320ms ease;
+        z-index: 200;
+        padding: 18px;
+        display: flex;
+        flex-direction: column;
+      }
+      .cart-drawer.open {
+        transform: translateX(0);
+      }
+      .cart-drawer h3 {
+        margin: 0 0 12px 0;
+        color: var(--maroon);
+      }
+      .cart-items {
+        flex: 1;
+        overflow: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        padding-right: 6px;
+      }
+      .cart-item {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        background: #fff6f4;
+        padding: 10px;
+        border-radius: 10px;
+      }
+      .cart-item img {
+        width: 64px;
+        height: 56px;
+        object-fit: cover;
+        border-radius: 8px;
+      }
+      .cart-item .meta {
+        flex: 1;
+      }
+      .cart-item .meta h4 {
+        margin: 0;
+        font-size: 14px;
+      }
+      .cart-item .controls {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
+      .cart-footer {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        padding-top: 12px;
+      }
+      .cart-footer .total {
+        font-weight: 900;
+        color: var(--maroon);
+      }
+      .icon-close {
+        background: transparent;
+        border: 0;
+        font-size: 18px;
+        cursor: pointer;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <!-- sticky spacer/header so page content doesn't jump -->
+      <header></header>
+
+      <!-- Floating nav (sticky) -->
+      <div class="floating-nav-wrap">
+        <div
+          class="floating-inner"
+          style="max-width: var(--max-width); padding: 0 20px"
+        >
+          <nav class="floating-nav" aria-label="Main navigation">
+            <div class="nav-left">
+              <a href="index.html">Home</a>
+              <a href="menu.html">Menu</a>
+            </div>
+
+            <div class="nav-center">
+              <div class="logo-wrap" aria-hidden="false">
+                <img class="logo-img" src="logo.png" alt="EatSweet logo" />
+                <div class="logo-text">
+                  <span class="line1">Eat</span>
+                  <span class="line2">Sweet</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="nav-right">
+              <a href="about.html">About Us</a>
+              <a href="#contact">Contact</a>
+            </div>
+          </nav>
+
+          <!-- Cart button is outside the rounded nav but still inside the sticky wrapper -->
+          <div class="cart-outside">
+            <button
+              id="cartBtn"
+              class="cart-btn"
+              aria-label="Cart"
+              onclick="toggleCart()"
+            >
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                aria-hidden="true"
+              >
+                <path
+                  d="M6 6h15l-1.5 9h-12L4 2H2"
+                  stroke="white"
+                  stroke-width="1.6"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+                <circle cx="10" cy="20" r="1.6" fill="white" />
+                <circle cx="18" cy="20" r="1.6" fill="white" />
+              </svg>
+              <span>Cart</span>
+              <span id="cartCount" class="cart-count">0</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Page content start -->
+      <main
+        style="
+          background: url('https://via.placeholder.com/1600x900.png?text=Bakery+Background')
+            center/cover no-repeat;
+          padding-bottom: 40px;
+        "
+      >
+        <section class="hero">
+          <div>
+            <h1 class="headline">Baking<br />Happiness for Every Heart</h1>
+            <p style="color: var(--muted); max-width: 560px">
+              Taste the joy — freshly baked. No artificial flavours, made with
+              love.
+            </p>
+            <div style="margin-top: 18px">
+              <button
+                id="shopBtn"
+                style="
+                  background: var(--maroon);
+                  color: white;
+                  padding: 12px 18px;
+                  border-radius: 12px;
+                  border: 0;
+                  font-weight: 900;
+                "
+                onclick="scrollToBestSellers()"
+              >
+                Shop Bestsellers
+              </button>
+            </div>
+          </div>
+
+          <div
+            style="
+              height: 360px;
+              background: white;
+              border-radius: 16px;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              box-shadow: 0 10px 30px rgba(122, 31, 47, 0.06);
+            "
+          >
+            <div style="font-size: 36px">🥐</div>
+          </div>
+        </section>
+      </main>
+
+      <!-- solid background rest of page -->
+      <main style="background: var(--pink-bg); padding-top: 20px">
+        <section id="bestsellers" style="padding: 20px 0">
+          <h2 style="color: var(--maroon); margin-bottom: 8px">Best Sellers</h2>
+          <p style="color: var(--muted); margin-top: 0">
+            Our most loved treats — baked fresh daily in Mumbai.
+          </p>
+
+          <div
+            class="products-grid"
+            style="
+              display: grid;
+              grid-template-columns: repeat(3, 1fr);
+              gap: 22px;
+              margin-top: 18px;
+            "
+          >
+            <!-- product card -->
+            <div
+              class="product-card"
+              data-name="Bombay Pav"
+              data-price="40"
+              style="
+                background: white;
+                padding: 16px;
+                border-radius: 12px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+              "
+            >
+              <img
+                src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='360' height='220'><rect width='100%25' height='100%25' fill='%23d9d9d9'/></svg>"
+                alt="Bombay Pav"
+                style="
+                  width: 100%;
+                  height: 220px;
+                  object-fit: cover;
+                  border-radius: 10px;
+                "
+              />
+              <h4 style="margin: 12px 0 6px; color: var(--maroon)">
+                Bombay Pav
+              </h4>
+              <div
+                class="price-text"
+                style="
+                  color: var(--muted);
+                  font-weight: 700;
+                  margin-bottom: 12px;
+                "
+              >
+                ₹ 40
+              </div>
+              <button
+                class="add-btn"
+                style="
+                  background: var(--accent);
+                  color: white;
+                  padding: 10px 14px;
+                  border-radius: 10px;
+                  border: 0;
+                  font-weight: 800;
+                  cursor: pointer;
+                "
+              >
+                Add
+              </button>
+            </div>
+
+            <div
+              class="product-card"
+              data-name="Keema Bun"
+              data-price="85"
+              style="
+                background: white;
+                padding: 16px;
+                border-radius: 12px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+              "
+            >
+              <img
+                src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='360' height='220'><rect width='100%25' height='100%25' fill='%23d9d9d9'/></svg>"
+                alt="Keema Bun"
+                style="
+                  width: 100%;
+                  height: 220px;
+                  object-fit: cover;
+                  border-radius: 10px;
+                "
+              />
+              <h4 style="margin: 12px 0 6px; color: var(--maroon)">
+                Keema Bun
+              </h4>
+              <div
+                class="price-text"
+                style="
+                  color: var(--muted);
+                  font-weight: 700;
+                  margin-bottom: 12px;
+                "
+              >
+                ₹ 85
+              </div>
+              <button
+                class="add-btn"
+                style="
+                  background: var(--accent);
+                  color: white;
+                  padding: 10px 14px;
+                  border-radius: 10px;
+                  border: 0;
+                  font-weight: 800;
+                  cursor: pointer;
+                "
+              >
+                Add
+              </button>
+            </div>
+
+            <div
+              class="product-card"
+              data-name="Rusk"
+              data-price="120"
+              style="
+                background: white;
+                padding: 16px;
+                border-radius: 12px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+              "
+            >
+              <img
+                src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='360' height='220'><rect width='100%25' height='100%25' fill='%23d9d9d9'/></svg>"
+                alt="Rusk"
+                style="
+                  width: 100%;
+                  height: 220px;
+                  object-fit: cover;
+                  border-radius: 10px;
+                "
+              />
+              <h4 style="margin: 12px 0 6px; color: var(--maroon)">Rusk</h4>
+              <div
+                class="price-text"
+                style="
+                  color: var(--muted);
+                  font-weight: 700;
+                  margin-bottom: 12px;
+                "
+              >
+                ₹ 120
+              </div>
+              <button
+                class="add-btn"
+                style="
+                  background: var(--accent);
+                  color: white;
+                  padding: 10px 14px;
+                  border-radius: 10px;
+                  border: 0;
+                  font-weight: 800;
+                  cursor: pointer;
+                "
+              >
+                Add
+              </button>
+            </div>
+
+            <div
+              class="product-card"
+              data-name="Butter Cookie"
+              data-price="35"
+              style="
+                background: white;
+                padding: 16px;
+                border-radius: 12px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+              "
+            >
+              <img
+                src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='360' height='220'><rect width='100%25' height='100%25' fill='%23d9d9d9'/></svg>"
+                alt="Butter Cookie"
+                style="
+                  width: 100%;
+                  height: 220px;
+                  object-fit: cover;
+                  border-radius: 10px;
+                "
+              />
+              <h4 style="margin: 12px 0 6px; color: var(--maroon)">
+                Butter Cookie
+              </h4>
+              <div
+                class="price-text"
+                style="
+                  color: var(--muted);
+                  font-weight: 700;
+                  margin-bottom: 12px;
+                "
+              >
+                ₹ 35
+              </div>
+              <button
+                class="add-btn"
+                style="
+                  background: var(--accent);
+                  color: white;
+                  padding: 10px 14px;
+                  border-radius: 10px;
+                  border: 0;
+                  font-weight: 800;
+                  cursor: pointer;
+                "
+              >
+                Add
+              </button>
+            </div>
+
+            <div
+              class="product-card"
+              data-name="Mawa Cake"
+              data-price="320"
+              style="
+                background: white;
+                padding: 16px;
+                border-radius: 12px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+              "
+            >
+              <img
+                src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='360' height='220'><rect width='100%25' height='100%25' fill='%23d9d9d9'/></svg>"
+                alt="Mawa Cake"
+                style="
+                  width: 100%;
+                  height: 220px;
+                  object-fit: cover;
+                  border-radius: 10px;
+                "
+              />
+              <h4 style="margin: 12px 0 6px; color: var(--maroon)">
+                Mawa Cake
+              </h4>
+              <div
+                class="price-text"
+                style="
+                  color: var(--muted);
+                  font-weight: 700;
+                  margin-bottom: 12px;
+                "
+              >
+                ₹ 320
+              </div>
+              <button
+                class="add-btn"
+                style="
+                  background: var(--accent);
+                  color: white;
+                  padding: 10px 14px;
+                  border-radius: 10px;
+                  border: 0;
+                  font-weight: 800;
+                  cursor: pointer;
+                "
+              >
+                Add
+              </button>
+            </div>
+
+            <div
+              class="product-card"
+              data-name="Almond Croissant"
+              data-price="150"
+              style="
+                background: white;
+                padding: 16px;
+                border-radius: 12px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+              "
+            >
+              <img
+                src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='360' height='220'><rect width='100%25' height='100%25' fill='%23d9d9d9'/></svg>"
+                alt="Almond Croissant"
+                style="
+                  width: 100%;
+                  height: 220px;
+                  object-fit: cover;
+                  border-radius: 10px;
+                "
+              />
+              <h4 style="margin: 12px 0 6px; color: var(--maroon)">
+                Almond Croissant
+              </h4>
+              <div
+                class="price-text"
+                style="
+                  color: var(--muted);
+                  font-weight: 700;
+                  margin-bottom: 12px;
+                "
+              >
+                ₹ 150
+              </div>
+              <button
+                class="add-btn"
+                style="
+                  background: var(--accent);
+                  color: white;
+                  padding: 10px 14px;
+                  border-radius: 10px;
+                  border: 0;
+                  font-weight: 800;
+                  cursor: pointer;
+                "
+              >
+                Add
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <!-- Center image with overlay text (130px tall box) -->
+        <section
+          style="
+            padding: 28px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+          "
+        >
+          <div
+            style="
+              position: relative;
+              width: 100%;
+              max-width: 900px;
+              height: 130px;
+              border-radius: 12px;
+              overflow: hidden;
+              background: #f6eae8;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+            "
+          >
+            <img
+              src="https://via.placeholder.com/900x130/cccccc/ffffff.png?text=Bakery+Image+Placeholder"
+              alt="placeholder"
+              style="
+                position: absolute;
+                inset: 0;
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                opacity: 0.7;
+              "
+            />
+            <div
+              style="
+                position: relative;
+                z-index: 2;
+                text-align: center;
+                color: var(--maroon);
+                font-weight: 900;
+                font-size: 20px;
+              "
+            >
+              Where every treat is a little slice of heaven
+            </div>
+          </div>
+        </section>
+
+        <!-- Student discount box -->
+        <section
+          style="padding: 12px 0; display: flex; justify-content: center"
+        >
+          <div
+            style="
+              max-width: 900px;
+              display: flex;
+              gap: 20px;
+              align-items: center;
+              background: white;
+              border-radius: 12px;
+              padding: 18px;
+              box-shadow: 0 8px 20px rgba(122, 31, 47, 0.06);
+            "
+          >
+            <div style="flex: 1">
+              <div
+                style="font-weight: 900; color: var(--maroon); font-size: 18px"
+              >
+                Student Discount — 20% OFF
+              </div>
+              <p style="color: var(--muted); margin-top: 8px">
+                Show your valid student ID at checkout to get 20% off on all
+                bakery items. Offer valid only for students studying in Mumbai
+                colleges.
+              </p>
+              <div
+                style="
+                  margin-top: 10px;
+                  display: flex;
+                  gap: 10px;
+                  align-items: center;
+                "
+              >
+                <button
+                  style="
+                    background: var(--maroon);
+                    color: white;
+                    padding: 8px 12px;
+                    border-radius: 10px;
+                    border: 0;
+                    font-weight: 800;
+                  "
+                >
+                  Know More</button
+                ><span style="color: var(--muted); font-weight: 700"
+                  >ID required at pickup</span
+                >
+              </div>
+            </div>
+            <div
+              style="
+                width: 160px;
+                height: 110px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+              "
+            >
+              <img
+                src="https://via.placeholder.com/140x90/cccccc/ffffff.png?text=Student+ID+Illustration"
+                alt="student"
+                style="width: 140px; height: 90px; object-fit: contain"
+              />
+            </div>
+          </div>
+        </section>
+
+        <!-- Premium products carousel (4 visible) -->
+        <section style="padding: 28px 0">
+          <div
+            style="
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              max-width: 1150px;
+              margin: 0 auto;
+            "
+          >
+            <h2 style="color: var(--maroon); margin: 0">Premium Selections</h2>
+            <div style="display: flex; gap: 10px">
+              <button
+                id="prevPremium"
+                style="
+                  background: transparent;
+                  border: 1px solid rgba(122, 31, 47, 0.08);
+                  padding: 8px 10px;
+                  border-radius: 8px;
+                "
+              >
+                ◀
+              </button>
+              <button
+                id="nextPremium"
+                style="
+                  background: transparent;
+                  border: 1px solid rgba(122, 31, 47, 0.08);
+                  padding: 8px 10px;
+                  border-radius: 8px;
+                "
+              >
+                ▶
+              </button>
+            </div>
+          </div>
+
+          <div
+            style="
+              max-width: 1150px;
+              margin: 18px auto;
+              overflow: hidden;
+              border-radius: 12px;
+            "
+          >
+            <div
+              id="premiumTrack"
+              style="display: flex; gap: 18px; transition: transform 400ms ease"
+            >
+              <!-- premium card (1) -->
+              <div
+                class="premium-card"
+                data-name="Signature Mawa Cake"
+                data-price="420"
+                style="
+                  flex: 0 0 calc((100% - 54px) / 4);
+                  background: white;
+                  border-radius: 12px;
+                  padding: 14px;
+                  box-shadow: 0 12px 30px rgba(122, 31, 47, 0.06);
+                  display: flex;
+                  flex-direction: column;
+                  align-items: center;
+                "
+              >
+                <img
+                  src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='360' height='220'><rect width='100%25' height='100%25' fill='%23d9d9d9'/></svg>"
+                  alt="Premium 1"
+                  style="
+                    width: 100%;
+                    height: 140px;
+                    object-fit: cover;
+                    border-radius: 8px;
+                  "
+                />
+                <div
+                  style="
+                    font-weight: 900;
+                    color: var(--maroon);
+                    margin-top: 10px;
+                  "
+                >
+                  Signature Mawa Cake
+                </div>
+                <div
+                  style="color: var(--muted); font-weight: 700; margin-top: 6px"
+                >
+                  ₹ 420
+                </div>
+                <button
+                  class="add-btn"
+                  style="
+                    margin-top: auto;
+                    background: var(--maroon);
+                    color: white;
+                    padding: 8px 12px;
+                    border-radius: 10px;
+                    border: 0;
+                    font-weight: 800;
+                    cursor: pointer;
+                  "
+                >
+                  Add
+                </button>
+              </div>
+
+              <!-- premium card (2) -->
+              <div
+                class="premium-card"
+                data-name="Almond Croissant Deluxe"
+                data-price="260"
+                style="
+                  flex: 0 0 calc((100% - 54px) / 4);
+                  background: white;
+                  border-radius: 12px;
+                  padding: 14px;
+                  box-shadow: 0 12px 30px rgba(122, 31, 47, 0.06);
+                  display: flex;
+                  flex-direction: column;
+                  align-items: center;
+                "
+              >
+                <img
+                  src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='360' height='220'><rect width='100%25' height='100%25' fill='%23d9d9d9'/></svg>"
+                  alt="Premium 2"
+                  style="
+                    width: 100%;
+                    height: 140px;
+                    object-fit: cover;
+                    border-radius: 8px;
+                  "
+                />
+                <div
+                  style="
+                    font-weight: 900;
+                    color: var(--maroon);
+                    margin-top: 10px;
+                  "
+                >
+                  Almond Croissant Deluxe
+                </div>
+                <div
+                  style="color: var(--muted); font-weight: 700; margin-top: 6px"
+                >
+                  ₹ 260
+                </div>
+                <button
+                  class="add-btn"
+                  style="
+                    margin-top: auto;
+                    background: var(--maroon);
+                    color: white;
+                    padding: 8px 12px;
+                    border-radius: 10px;
+                    border: 0;
+                    font-weight: 800;
+                    cursor: pointer;
+                  "
+                >
+                  Add
+                </button>
+              </div>
+
+              <!-- premium card (3) -->
+              <div
+                class="premium-card"
+                data-name="Saffron Pista Roll"
+                data-price="340"
+                style="
+                  flex: 0 0 calc((100% - 54px) / 4);
+                  background: white;
+                  border-radius: 12px;
+                  padding: 14px;
+                  box-shadow: 0 12px 30px rgba(122, 31, 47, 0.06);
+                  display: flex;
+                  flex-direction: column;
+                  align-items: center;
+                "
+              >
+                <img
+                  src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='360' height='220'><rect width='100%25' height='100%25' fill='%23d9d9d9'/></svg>"
+                  alt="Premium 3"
+                  style="
+                    width: 100%;
+                    height: 140px;
+                    object-fit: cover;
+                    border-radius: 8px;
+                  "
+                />
+                <div
+                  style="
+                    font-weight: 900;
+                    color: var(--maroon);
+                    margin-top: 10px;
+                  "
+                >
+                  Saffron Pista Roll
+                </div>
+                <div
+                  style="color: var(--muted); font-weight: 700; margin-top: 6px"
+                >
+                  ₹ 340
+                </div>
+                <button
+                  class="add-btn"
+                  style="
+                    margin-top: auto;
+                    background: var(--maroon);
+                    color: white;
+                    padding: 8px 12px;
+                    border-radius: 10px;
+                    border: 0;
+                    font-weight: 800;
+                    cursor: pointer;
+                  "
+                >
+                  Add
+                </button>
+              </div>
+
+              <!-- premium card (4) -->
+              <div
+                class="premium-card"
+                data-name="Royal Butter Kulcha"
+                data-price="380"
+                style="
+                  flex: 0 0 calc((100% - 54px) / 4);
+                  background: white;
+                  border-radius: 12px;
+                  padding: 14px;
+                  box-shadow: 0 12px 30px rgba(122, 31, 47, 0.06);
+                  display: flex;
+                  flex-direction: column;
+                  align-items: center;
+                "
+              >
+                <img
+                  src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='360' height='220'><rect width='100%25' height='100%25' fill='%23d9d9d9'/></svg>"
+                  alt="Premium 4"
+                  style="
+                    width: 100%;
+                    height: 140px;
+                    object-fit: cover;
+                    border-radius: 8px;
+                  "
+                />
+                <div
+                  style="
+                    font-weight: 900;
+                    color: var(--maroon);
+                    margin-top: 10px;
+                  "
+                >
+                  Royal Butter Kulcha
+                </div>
+                <div
+                  style="color: var(--muted); font-weight: 700; margin-top: 6px"
+                >
+                  ₹ 380
+                </div>
+                <button
+                  class="add-btn"
+                  style="
+                    margin-top: auto;
+                    background: var(--maroon);
+                    color: white;
+                    padding: 8px 12px;
+                    border-radius: 10px;
+                    border: 0;
+                    font-weight: 800;
+                    cursor: pointer;
+                  "
+                >
+                  Add
+                </button>
+              </div>
+
+              <!-- extra cards (for scrolling) -->
+              <div
+                class="premium-card"
+                data-name="Mango Mousse Tart"
+                data-price="420"
+                style="
+                  flex: 0 0 calc((100% - 54px) / 4);
+                  background: white;
+                  border-radius: 12px;
+                  padding: 14px;
+                  box-shadow: 0 12px 30px rgba(122, 31, 47, 0.06);
+                  display: flex;
+                  flex-direction: column;
+                  align-items: center;
+                "
+              >
+                <img
+                  src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='360' height='220'><rect width='100%25' height='100%25' fill='%23d9d9d9'/></svg>"
+                  alt="Premium 5"
+                  style="
+                    width: 100%;
+                    height: 140px;
+                    object-fit: cover;
+                    border-radius: 8px;
+                  "
+                />
+                <div
+                  style="
+                    font-weight: 900;
+                    color: var(--maroon);
+                    margin-top: 10px;
+                  "
+                >
+                  Mango Mousse Tart
+                </div>
+                <div
+                  style="color: var(--muted); font-weight: 700; margin-top: 6px"
+                >
+                  ₹ 420
+                </div>
+                <button
+                  class="add-btn"
+                  style="
+                    margin-top: auto;
+                    background: var(--maroon);
+                    color: white;
+                    padding: 8px 12px;
+                    border-radius: 10px;
+                    border: 0;
+                    font-weight: 800;
+                    cursor: pointer;
+                  "
+                >
+                  Add
+                </button>
+              </div>
+
+              <div
+                class="premium-card"
+                data-name="Streusel Danish"
+                data-price="320"
+                style="
+                  flex: 0 0 calc((100% - 54px) / 4);
+                  background: white;
+                  border-radius: 12px;
+                  padding: 14px;
+                  box-shadow: 0 12px 30px rgba(122, 31, 47, 0.06);
+                  display: flex;
+                  flex-direction: column;
+                  align-items: center;
+                "
+              >
+                <img
+                  src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='360' height='220'><rect width='100%25' height='100%25' fill='%23d9d9d9'/></svg>"
+                  alt="Premium 6"
+                  style="
+                    width: 100%;
+                    height: 140px;
+                    object-fit: cover;
+                    border-radius: 8px;
+                  "
+                />
+                <div
+                  style="
+                    font-weight: 900;
+                    color: var(--maroon);
+                    margin-top: 10px;
+                  "
+                >
+                  Streusel Danish
+                </div>
+                <div
+                  style="color: var(--muted); font-weight: 700; margin-top: 6px"
+                >
+                  ₹ 320
+                </div>
+                <button
+                  class="add-btn"
+                  style="
+                    margin-top: auto;
+                    background: var(--maroon);
+                    color: white;
+                    padding: 8px 12px;
+                    border-radius: 10px;
+                    border: 0;
+                    font-weight: 800;
+                    cursor: pointer;
+                  "
+                >
+                  Add
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- New features section (styled like reference) -->
+        <section
+          style="
+            padding: 36px 0;
+            background: linear-gradient(180deg, transparent, #fff0);
+          "
+        >
+          <div
+            style="
+              max-width: 1150px;
+              margin: 0 auto;
+              display: grid;
+              grid-template-columns: 1fr 1fr;
+              gap: 28px;
+              align-items: center;
+            "
+          >
+            <div
+              style="
+                background: white;
+                border-radius: 12px;
+                padding: 24px;
+                box-shadow: 0 12px 30px rgba(122, 31, 47, 0.06);
+                min-height: 220px;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+              "
+            >
+              <h3
+                style="
+                  margin: 0;
+                  color: var(--maroon);
+                  font-size: 36px;
+                  font-weight: 900;
+                  line-height: 1;
+                "
+              >
+                Sweetness delivered in every box
+              </h3>
+              <p
+                style="color: var(--muted); margin-top: 12px; max-width: 480px"
+              >
+                Add any 4 flavours of cupcakes or treats — perfect for parties,
+                office orders, and gift boxes. Freshly baked and hand-packed
+                daily at our Mumbai kitchen.
+              </p>
+              <div
+                style="
+                  margin-top: 18px;
+                  display: flex;
+                  gap: 12px;
+                  align-items: center;
+                "
+              >
+                <button
+                  style="
+                    background: var(--accent);
+                    color: white;
+                    padding: 10px 16px;
+                    border-radius: 10px;
+                    border: 0;
+                    font-weight: 800;
+                  "
+                >
+                  Order your box today
+                </button>
+                <button
+                  style="
+                    background: transparent;
+                    border: 1px solid rgba(122, 31, 47, 0.08);
+                    padding: 10px 14px;
+                    border-radius: 10px;
+                    font-weight: 800;
+                  "
+                >
+                  View details
+                </button>
+              </div>
+            </div>
+
+            <div
+              style="
+                display: flex;
+                flex-direction: column;
+                gap: 18px;
+                align-items: center;
+              "
+            >
+              <div
+                style="
+                  width: 100%;
+                  background: #f6eae8;
+                  border-radius: 12px;
+                  padding: 18px;
+                  display: flex;
+                  gap: 12px;
+                  align-items: center;
+                  justify-content: center;
+                  min-height: 220px;
+                "
+              >
+                <img
+                  src="https://via.placeholder.com/420x180/cccccc/ffffff.png?text=Feature+Image"
+                  alt="feature"
+                  style="
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                    border-radius: 8px;
+                    opacity: 0.95;
+                  "
+                />
+              </div>
+
+              <div style="display: flex; gap: 12px; width: 100%">
+                <div
+                  style="
+                    flex: 1;
+                    background: white;
+                    border-radius: 12px;
+                    padding: 12px;
+                    box-shadow: 0 8px 20px rgba(122, 31, 47, 0.04);
+                    display: flex;
+                    flex-direction: column;
+                    align-items: flex-start;
+                  "
+                >
+                  <div
+                    style="
+                      font-weight: 900;
+                      color: var(--maroon);
+                      margin-bottom: 6px;
+                    "
+                  >
+                    No Artificial Additives
+                  </div>
+                  <div style="color: var(--muted); font-size: 14px">
+                    Pure ingredients, real flavours.
+                  </div>
+                </div>
+                <div
+                  style="
+                    flex: 1;
+                    background: white;
+                    border-radius: 12px;
+                    padding: 12px;
+                    box-shadow: 0 8px 20px rgba(122, 31, 47, 0.04);
+                    display: flex;
+                    flex-direction: column;
+                    align-items: flex-start;
+                  "
+                >
+                  <div
+                    style="
+                      font-weight: 900;
+                      color: var(--maroon);
+                      margin-bottom: 6px;
+                    "
+                  >
+                    Fresh Daily
+                  </div>
+                  <div style="color: var(--muted); font-size: 14px">
+                    Baked every morning at our local kitchen.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <footer
+        id="contact"
+        style="
+          background: var(--accent);
+          padding: 60px 0;
+          margin-top: 40px;
+          color: white;
+        "
+      >
+        <div style="max-width: 1150px; margin: 0 auto; padding: 0 20px">
+          <!-- Top row: heading (left) + large image (right) -->
+          <div
+            style="
+              display: flex;
+              gap: 28px;
+              align-items: center;
+              justify-content: space-between;
+              flex-wrap: wrap;
+            "
+          >
+            <div style="flex: 0 1 520px">
+              <h2
+                style="
+                  font-size: 48px;
+                  font-weight: 900;
+                  line-height: 1.05;
+                  margin: 0 0 12px 0;
+                  color: white;
+                  max-width: 520px;
+                "
+              >
+                WHERE EVERY TREAT IS A LITTLE<br />SLICE OF HEAVEN
+              </h2>
+            </div>
+
+            <div
+              style="
+                flex: 1 1 360px;
+                min-width: 260px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+              "
+            >
+              <div
+                style="
+                  width: 100%;
+                  height: 140px;
+                  background: rgba(255, 255, 255, 0.18);
+                  border-radius: 12px;
+                  overflow: hidden;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                "
+              >
+                <img
+                  src="https://via.placeholder.com/520x140/cccccc/ffffff.png?text=Bakery+Image"
+                  style="
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                    opacity: 0.95;
+                  "
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- Bottom row: left (About + Explore) and right (Follow + socials) -->
+          <div
+            style="
+              display: flex;
+              gap: 28px;
+              align-items: flex-start;
+              justify-content: space-between;
+              margin-top: 28px;
+              flex-wrap: wrap;
+            "
+          >
+            <div
+              style="
+                display: flex;
+                gap: 20px;
+                flex: 1 1 520px;
+                min-width: 260px;
+              "
+            >
+              <!-- About -->
+              <div style="flex: 1; background: transparent">
+                <h3
+                  style="
+                    font-weight: 900;
+                    color: #ffe3d9;
+                    margin-bottom: 10px;
+                    font-size: 18px;
+                  "
+                >
+                  About Us
+                </h3>
+                <p style="margin: 4px 0; color: white; font-size: 14px"></p>
+                <p style="margin: 4px 0; color: white; font-size: 14px">
+                  eatsweet@bakery
+                </p>
+                <p style="margin: 4px 0; color: white; font-size: 14px">
+                  Mumbai
+                </p>
+              </div>
+
+              <!-- Explore -->
+              <div style="flex: 1; background: transparent">
+                <h3
+                  style="
+                    font-weight: 900;
+                    color: #ffe3d9;
+                    margin-bottom: 10px;
+                    font-size: 18px;
+                  "
+                >
+                  Explore
+                </h3>
+                <p style="margin: 4px 0; color: white; font-size: 14px">Home</p>
+                <p style="margin: 4px 0; color: white; font-size: 14px">
+                  Products
+                </p>
+                <p style="margin: 4px 0; color: white; font-size: 14px">
+                  Contact Us
+                </p>
+                <p style="margin: 4px 0; color: white; font-size: 14px">
+                  About Us
+                </p>
+              </div>
+            </div>
+
+            <!-- Follow Us -->
+            <div style="flex: 0 1 260px; min-width: 200px">
+              <h3
+                style="
+                  font-weight: 900;
+                  color: #ffe3d9;
+                  margin-bottom: 10px;
+                  font-size: 18px;
+                "
+              >
+                Follow us
+              </h3>
+              <div style="display: flex; gap: 14px; margin-top: 8px">
+                <div
+                  style="
+                    width: 38px;
+                    height: 38px;
+                    border-radius: 50%;
+                    background: white;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    cursor: pointer;
+                  "
+                >
+                  <span
+                    style="
+                      font-size: 20px;
+                      color: var(--accent);
+                      font-weight: 900;
+                    "
+                    >f</span
+                  >
+                </div>
+                <div
+                  style="
+                    width: 38px;
+                    height: 38px;
+                    border-radius: 50%;
+                    background: white;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    cursor: pointer;
+                  "
+                >
+                  <span
+                    style="
+                      font-size: 20px;
+                      color: var(--accent);
+                      font-weight: 900;
+                    "
+                    >p</span
+                  >
+                </div>
+                <div
+                  style="
+                    width: 38px;
+                    height: 38px;
+                    border-radius: 50%;
+                    background: white;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    cursor: pointer;
+                  "
+                >
+                  <span
+                    style="
+                      font-size: 20px;
+                      color: var(--accent);
+                      font-weight: 900;
+                    "
+                    >💬</span
+                  >
+                </div>
+                <div
+                  style="
+                    width: 38px;
+                    height: 38px;
+                    border-radius: 50%;
+                    background: white;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    cursor: pointer;
+                  "
+                >
+                  <span
+                    style="
+                      font-size: 20px;
+                      color: var(--accent);
+                      font-weight: 900;
+                    "
+                    >📸</span
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </footer>
+    </div>
+
+    <!-- Cart drawer -->
+    <div id="cartDrawer" class="cart-drawer" aria-hidden="true">
+      <div
+        style="
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+        "
+      >
+        <h3>Your Cart</h3>
+        <button class="icon-close" onclick="toggleCart()">✕</button>
+      </div>
+      <div id="cartItems" class="cart-items"></div>
+      <div class="cart-footer">
+        <div class="total">Total: ₹ <span id="cartTotal">0</span></div>
+        <div style="display: flex; gap: 10px">
+          <button
+            onclick="checkout()"
+            style="
+              flex: 1;
+              background: var(--maroon);
+              color: white;
+              padding: 10px;
+              border-radius: 10px;
+              border: 0;
+              font-weight: 900;
+            "
+          >
+            Checkout
+          </button>
+          <button
+            onclick="clearCart()"
+            style="
+              background: transparent;
+              border: 1px solid rgba(122, 31, 47, 0.08);
+              padding: 10px;
+              border-radius: 10px;
+              font-weight: 800;
+            "
+          >
+            Clear
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Use a shared cart key so both pages persist to the same storage
+      const CART_KEY = "eatsweet_cart_v1";
+      let cartState = { items: {}, totalCount: 0, totalPrice: 0 };
+
+      function loadCart() {
+        try {
+          const raw = localStorage.getItem(CART_KEY);
+          if (raw) cartState = JSON.parse(raw);
+        } catch (e) {
+          console.warn("loadCart", e);
+        }
+        computeTotals();
+        updateCartDisplay();
+        renderCartDrawer();
+        refreshCardControls();
+      }
+      function saveCart() {
+        try {
+          localStorage.setItem(CART_KEY, JSON.stringify(cartState));
+        } catch (e) {
+          console.warn("saveCart", e);
+        }
+      }
+
+      function computeTotals() {
+        let t = 0,
+          c = 0;
+        Object.values(cartState.items).forEach((it) => {
+          t += (it.price || 0) * it.count;
+          c += it.count;
+        });
+        cartState.totalPrice = t;
+        cartState.totalCount = c;
+      }
+
+      function updateCartDisplay() {
+        const el = document.getElementById("cartCount");
+        if (el) el.textContent = cartState.totalCount || 0;
+        const btn = document.getElementById("cartBtn");
+        if (btn)
+          btn.style.boxShadow =
+            cartState.totalCount > 0
+              ? "0 16px 36px rgba(122,31,47,0.22)"
+              : "0 12px 30px rgba(122,31,47,0.14)";
+      }
+
+      function setItemCount(sku, count, info = {}) {
+        count = Math.max(0, Math.floor(count));
+        if (count === 0) delete cartState.items[sku];
+        else
+          cartState.items[sku] = {
+            count,
+            price: info.price || 0,
+            title: info.name || info.title || sku,
+            img: info.img || "",
+          };
+        computeTotals();
+        saveCart();
+        updateCartDisplay();
+        renderCartDrawer();
+        refreshCardControls();
+      }
+      function incrementItem(sku, info = {}) {
+        const prev = cartState.items[sku]?.count || 0;
+        setItemCount(sku, prev + 1, info);
+      }
+      function decrementItem(sku) {
+        const prev = cartState.items[sku]?.count || 0;
+        setItemCount(sku, Math.max(0, prev - 1), cartState.items[sku] || {});
+      }
+
+      function toggleCart(open) {
+        const d = document.getElementById("cartDrawer");
+        if (!d) return;
+        const shouldOpen =
+          typeof open === "boolean" ? open : !d.classList.contains("open");
+        if (shouldOpen) d.classList.add("open");
+        else d.classList.remove("open");
+        d.setAttribute("aria-hidden", (!shouldOpen).toString());
+        renderCartDrawer();
+      }
+      function checkout() {
+        alert("Checkout — total ₹ " + (cartState.totalPrice || 0));
+      }
+      function clearCart() {
+        cartState.items = {};
+        cartState.totalCount = 0;
+        cartState.totalPrice = 0;
+        saveCart();
+        updateCartDisplay();
+        renderCartDrawer();
+        refreshCardControls();
+      }
+
+      function renderCartDrawer() {
+        const container = document.getElementById("cartItems");
+        const totalEl = document.getElementById("cartTotal");
+        if (!container || !totalEl) return;
+        container.innerHTML = "";
+        Object.keys(cartState.items).forEach((sku) => {
+          const it = cartState.items[sku];
+          const item = document.createElement("div");
+          item.className = "cart-item";
+          const img = document.createElement("img");
+          img.src = it.img || "https://via.placeholder.com/80x60.png?text=img";
+          const meta = document.createElement("div");
+          meta.className = "meta";
+          const title = document.createElement("h4");
+          title.textContent = it.title || sku;
+          const price = document.createElement("div");
+          price.style.color = "var(--muted)";
+          price.textContent = `₹ ${it.price || 0}`;
+          meta.appendChild(title);
+          meta.appendChild(price);
+          const controls = document.createElement("div");
+          controls.className = "controls";
+          const minus = document.createElement("button");
+          minus.textContent = "-";
+          minus.onclick = () => {
+            setItemCount(sku, (cartState.items[sku]?.count || 0) - 1);
+          };
+          const qty = document.createElement("div");
+          qty.textContent = it.count;
+          qty.style.fontWeight = "900";
+          qty.style.minWidth = "22px";
+          qty.style.textAlign = "center";
+          const plus = document.createElement("button");
+          plus.textContent = "+";
+          plus.onclick = () => {
+            setItemCount(sku, (cartState.items[sku]?.count || 0) + 1, it);
+          };
+          controls.appendChild(minus);
+          controls.appendChild(qty);
+          controls.appendChild(plus);
+          item.appendChild(img);
+          item.appendChild(meta);
+          item.appendChild(controls);
+          container.appendChild(item);
+        });
+        totalEl.textContent = String(cartState.totalPrice || 0);
+      }
+
+      // Make product/premium Add buttons behave like menu page: add item and replace with qty controls on the card
+      function refreshCardControls() {
+        // handle product-card, premium-card, item-card
+        document
+          .querySelectorAll(".product-card, .premium-card, .item-card")
+          .forEach((card, idx) => {
+            // compute or ensure SKU
+            const sku =
+              card.dataset.sku ||
+              (
+                card.dataset.name ||
+                card.querySelector("h4")?.textContent ||
+                "item-" + idx
+              )
+                .toString()
+                .toLowerCase()
+                .replace(/[^a-z0-9]+/g, "-") +
+                "-" +
+                idx;
+            const info = {
+              name:
+                card.dataset.name ||
+                card.querySelector("h4")?.textContent ||
+                sku,
+              price: Number(
+                card.dataset.price ||
+                  card
+                    .querySelector(".price-text")
+                    ?.textContent.replace(/[^0-9.]/g, "") ||
+                  card
+                    .querySelector(".item-price")
+                    ?.textContent.replace(/[^0-9.]/g, "") ||
+                  0
+              ),
+              img: card.dataset.img || card.querySelector("img")?.src || "",
+            };
+            card.dataset.sku = sku; // ensure sku stored
+
+            // Find existing control area or create one in place of the add button (without wiping the whole card)
+            let controlArea = card.querySelector(".item-actions");
+            const existingBtn = card.querySelector(".add-btn");
+            if (!controlArea) {
+              if (existingBtn) {
+                controlArea = document.createElement("div");
+                controlArea.className = "item-actions";
+                existingBtn.replaceWith(controlArea);
+              } else {
+                // append at end if nothing found
+                controlArea = document.createElement("div");
+                controlArea.className = "item-actions";
+                card.appendChild(controlArea);
+              }
+            }
+
+            // render either qty controls or add button
+            controlArea.innerHTML = "";
+            const item = cartState.items[sku];
+            if (item) {
+              const wrapper = document.createElement("div");
+              wrapper.className = "qty-controls";
+              const minus = document.createElement("button");
+              minus.className = "qty-btn";
+              minus.textContent = "-";
+              minus.onclick = () => decrementItem(sku);
+              const qty = document.createElement("div");
+              qty.textContent = item.count;
+              qty.style.minWidth = "26px";
+              qty.style.textAlign = "center";
+              qty.style.fontWeight = "800";
+              const plus = document.createElement("button");
+              plus.className = "qty-btn";
+              plus.textContent = "+";
+              plus.onclick = () => incrementItem(sku, info);
+              wrapper.appendChild(minus);
+              wrapper.appendChild(qty);
+              wrapper.appendChild(plus);
+              controlArea.appendChild(wrapper);
+            } else {
+              const add = document.createElement("button");
+              add.className = "add-btn";
+              add.textContent = "Add";
+              add.onclick = () => incrementItem(sku, info);
+              controlArea.appendChild(add);
+            }
+          });
+      }
+
+      function enhanceAddButtons() {
+        // keep for backward compatibility: listen for clicks on .add-btn and handle via incrementItem
+        document.addEventListener("click", (e) => {
+          const t = e.target;
+          if (!t) return;
+          if (t.classList && t.classList.contains("add-btn")) {
+            const card = t.closest(".product-card, .premium-card, .item-card");
+            if (!card) return;
+            const sku =
+              card.dataset.sku ||
+              (
+                card.dataset.name ||
+                card.querySelector("h4")?.textContent ||
+                "item"
+              )
+                .toString()
+                .toLowerCase()
+                .replace(/[^a-z0-9]+/g, "-");
+            const info = {
+              name:
+                card.dataset.name ||
+                card.querySelector("h4")?.textContent ||
+                sku,
+              price: Number(
+                card.dataset.price ||
+                  card
+                    .querySelector(".price-text")
+                    ?.textContent.replace(/[^0-9.]/g, "") ||
+                  0
+              ),
+              img: card.dataset.img || card.querySelector("img")?.src || "",
+            };
+            incrementItem(sku, info);
+          }
+        });
+      }
+
+      // Premium carousel (auto rotate)
+      (function premiumCarousel() {
+        const track = document.getElementById("premiumTrack");
+        if (!track) return;
+        const cards = Array.from(track.children);
+        let index = 0;
+        function showIndex(i) {
+          const cardWidth = cards[0].getBoundingClientRect().width + 18;
+          track.style.transform = `translateX(-${i * cardWidth}px)`;
+        }
+        setInterval(() => {
+          index = (index + 1) % Math.max(1, cards.length - 3);
+          showIndex(index);
+        }, 3000);
+        const prev = document.getElementById("prevPremium");
+        const next = document.getElementById("nextPremium");
+        if (prev)
+          prev.addEventListener("click", () => {
+            index = Math.max(0, index - 1);
+            showIndex(index);
+          });
+        if (next)
+          next.addEventListener("click", () => {
+            index = Math.min(cards.length - 4, index + 1);
+            showIndex(index);
+          });
+      })();
+
+      function scrollToBestSellers() {
+        const el = document.getElementById("bestsellers");
+        if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+
+      // init
+      function init() {
+        loadCart();
+        enhanceAddButtons();
+        refreshCardControls();
+      }
+      if (document.readyState === "loading")
+        document.addEventListener("DOMContentLoaded", init);
+      else init();
+    </script>
+  </body>
+</html>
