@@ -1,0 +1,36 @@
+.main-hero {
+  background: linear-gradient(135deg, #fff5f4 0%, #ffe8e5 100%);
+  padding-bottom: 40px;
+  border-radius: 16px;
+  margin-top: 20px;
+}
+.main-section {
+  background: var(--pink-bg);
+  padding-top: 20px;
+}
+.premium-wrapper {
+  max-width: 1150px;
+  margin: 18px auto;
+  overflow: hidden;
+  border-radius: 12px;
+}
+.btn {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 0;
+  font-weight: 800;
+  cursor: pointer;
+}
+.btn-primary {
+  background: var(--accent);
+  color: white;
+}
+.btn-strong {
+  background: var(--maroon);
+  color: white;
+}
+.site-footer .wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}

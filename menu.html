@@ -1,0 +1,794 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>EatSweet — Menu</title>
+  <style>
+    :root{
+      --accent:#ff7f69;
+      --maroon:#7a1f2f;
+      --pink-bg:#fff5f4;
+      --muted:#6b6b6b;
+      --max-width:1150px;
+      --nav-h:76px;
+      font-family:'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Arial;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--pink-bg);color:var(--maroon)}
+    .page{max-width:var(--max-width);margin:0 auto;padding:20px}
+
+    /* NAVBAR */
+    .floating-nav-wrap{position:sticky;top:18px;z-index:60;display:flex;justify-content:center;width:100%;}
+      /* keep inner constrained so navbar matches homepage exactly */
+      .floating-inner{position:relative;width:100%;max-width:var(--max-width);display:flex;justify-content:center;padding:0 20px}    
+      .floating-nav{width:100%;height:var(--nav-h);background:rgba(255,255,255,0.98);backdrop-filter:blur(6px);border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,0.08);display:flex;align-items:center;position:relative;padding:0 12px;}
+    
+    .nav-left,.nav-right{display:flex;gap:52px;flex:1;font-weight:800}
+    .nav-left{justify-content:flex-start;padding-left:20px}
+    .nav-right{justify-content:flex-end;padding-right:20px}
+    .floating-nav a{text-decoration:none;color:var(--maroon)}
+    .nav-center{flex:0;display:flex;align-items:center;gap:10px}
+    .logo-img{
+  height:40px;
+  width:auto;
+  max-width:140px;
+  display:block;
+  object-fit:contain;
+  flex-shrink:0;
+}
+
+    /* CART BUTTON */
+    .cart-outside{position:absolute;right:12px;top:calc(var(--nav-h) + 8px);z-index:70}
+    .cart-btn{background:linear-gradient(180deg,var(--accent),#ffa98b);border-radius:14px;border:0;padding:12px 14px;display:flex;align-items:center;gap:10px;color:white;font-weight:800;cursor:pointer;box-shadow:0 12px 30px rgba(0,0,0,0.15)}
+    .cart-count{background:rgba(255,255,255,0.2);padding:4px 8px;border-radius:999px;font-weight:900}
+
+    /* MENU LAYOUT */
+    .menu-wrap{display:grid;grid-template-columns:260px minmax(0,1fr);gap:28px;margin-top:26px;align-items:start;padding-right:20px}
+
+.catalog{min-width:0;padding-left:12px;padding-right:12px}
+
+    /* Category Nav */
+    .cat-nav{position:sticky;top:110px}
+    .cat-list{background:white;padding:12px;border-radius:12px;box-shadow:0 8px 20px rgba(0,0,0,0.05)}
+    .cat-list button{display:block;padding:10px 12px;border-radius:8px;border:0;background:transparent;cursor:pointer;font-weight:800;color:var(--maroon);width:100%;text-align:left}
+    .cat-list button.active{background:rgba(255,127,105,0.10)}
+
+    /* ITEMS */
+    .category-section{margin-bottom:36px}
+    .category-title{font-size:22px;font-weight:900;margin-bottom:12px}
+    .items-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+    .item-card{background:white;padding:14px;border-radius:12px;display:flex;flex-direction:column;align-items:center;box-shadow:0 8px 20px rgba(0,0,0,0.05)}
+    .item-card img{ width:100%; height:180px; object-fit:cover; border-radius:8px; background:#d9d9d9; }
+    .item-price{color:var(--muted);font-weight:700;margin-bottom:12px}
+
+    .qty-controls{display:flex;align-items:center;gap:10px;background:#ffe3dd;padding:8px 12px;border-radius:10px;font-weight:800;color:var(--maroon)}
+    .qty-btn{background:var(--accent);color:white;border:0;width:26px;height:26px;border-radius:6px;cursor:pointer;font-weight:900;font-size:16px;display:flex;align-items:center;justify-content:center}
+    .add-btn{background:var(--accent);color:white;border:0;padding:10px 14px;border-radius:10px;font-weight:800;cursor:pointer}
+
+    /* CART DRAWER (MATCH HOME PAGE) */
+    .cart-drawer{position:fixed;right:-480px;top:0;width:480px;height:100vh;background:white;box-shadow:-30px 0 60px rgba(122,31,47,0.18);padding:28px;display:flex;flex-direction:column;transition:right 320ms cubic-bezier(.2,.9,.2,1);z-index:600;color:var(--maroon)}
+    .cart-drawer.open{right:0}
+    .drawer-header{display:flex;justify-content:space-between;align-items:center;font-size:20px;font-weight:900}
+    .drawer-close{cursor:pointer;font-size:26px;font-weight:900;background:none;border:0}
+    .cart-items{flex:1;overflow:auto;margin-top:18px;display:flex;flex-direction:column;gap:12px}
+    .cart-item{display:flex;gap:12px;padding:10px;border-radius:12px;align-items:center;background:#fff5f4}
+    .cart-item img{width:72px;height:72px;object-fit:cover;border-radius:8px}
+    .cart-item .meta{flex:1}
+    .cart-item .meta .title{font-weight:900}
+    .cart-item .meta .price{color:var(--muted)}
+    .cart-item .controls{display:flex;align-items:center;gap:8px}
+    .cart-footer{padding-top:18px;border-top:1px solid rgba(0,0,0,0.06);display:flex;justify-content:space-between;align-items:center;gap:12px}
+    .checkout-btn{background:var(--maroon);color:white;border:0;padding:12px 16px;border-radius:12px;font-weight:900;cursor:pointer}
+    .clear-btn{background:transparent;border:1px solid rgba(122,31,47,0.08);padding:10px 12px;border-radius:10px;cursor:pointer}
+
+    footer{background:var(--accent);margin-top:50px;color:white;padding:60px 0;text-align:center;font-size:18px}
+
+    @media(max-width:900px){.menu-wrap{grid-template-columns:1fr}.items-grid{grid-template-columns:repeat(2,1fr)}.cart-drawer{width:100%;right:-100%}}
+    @media(max-width:600px){.items-grid{grid-template-columns:1fr}}
+  html { scroll-behavior: smooth; }
+    html { scroll-behavior: smooth; }
+    html { scroll-behavior: smooth; }
+    html { scroll-behavior: smooth; }
+    html { scroll-behavior: smooth; }
+    html { scroll-behavior: smooth; }
+    </style>
+</head>
+<body>
+  <div class="page">
+
+    <!-- NAV -->
+    <div class="floating-nav-wrap">
+      <div class="floating-inner">
+        <nav class="floating-nav" aria-label="Main navigation">
+          <div class="nav-left">
+            <a href="index.html">Home</a>
+            <a href="menu.html">Menu</a>
+          </div>
+
+          <div class="nav-center">
+            <div class="logo-wrap" style="display:flex;align-items:center;gap:12px">
+              <img class="logo-img" src="logo.png" alt="EatSweet logo" />
+              <div class="logo-text" style="line-height:1;color:var(--maroon);font-weight:900">
+                <span style="display:block">Eat</span>
+                <span style="display:block">Sweet</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="nav-right">
+            <a href="about.html">About Us</a>
+            <a href="#contact">Contact</a>
+          </div>
+        </nav>
+
+        <div class="cart-outside">
+          <button class="cart-btn" id="cartBtn" onclick="toggleCart()">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M6 6h15l-1.5 9h-12L4 2H2" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+              <circle cx="10" cy="20" r="1.6" fill="white" />
+              <circle cx="18" cy="20" r="1.6" fill="white" />
+            </svg>
+            <span>Cart</span>
+            <span id="cartCount" class="cart-count">0</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MENU -->
+    <div class="menu-wrap">
+      <aside class="cat-nav">
+        <div class="cat-list" id="catList">
+          <button data-target="pastries" class="active">Pastries</button>
+          <button data-target="cakes">Cakes</button>
+          <button data-target="cookies">Cookies</button>
+          <button data-target="breads">Breads</button>
+          <button data-target="savories">Savories</button>
+          <button data-target="beverages">Beverages</button>
+        </div>
+      </aside>
+
+      <section class="catalog">
+        <!-- PASTRIES -->
+        <div id="pastries" class="category-section">
+          <h3 class="category-title">Pastries</h3>
+          <div class="items-grid">
+            <div class="item-card" data-sku="almond-twist" data-name="Almond Twist" data-price="95" data-img="https://via.placeholder.com/400x300.png?text=Almond+Twist">
+              <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='300'><rect width='100%25' height='100%25' fill='%23d9d9d9'/></svg>" alt="">
+              <h4>Almond Twist</h4>
+              <div class="item-price">₹ 95</div>
+              <div class="item-actions"><button class="add-btn">Add</button></div>
+            </div>
+
+            <div class="item-card" data-sku="choco-croissant" data-name="Choco Croissant" data-price="150" data-img="https://via.placeholder.com/400x300.png?text=Choco+Croissant">
+              <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='300'><rect width='100%25' height='100%25' fill='%23d9d9d9'/></svg>" alt="">
+              <h4>Choco Croissant</h4>
+              <div class="item-price">₹ 150</div>
+              <div class="item-actions"><button class="add-btn">Add</button></div>
+            </div>
+
+            <div class="item-card" data-sku="almond-croissant" data-name="Almond Croissant" data-price="160" data-img="https://via.placeholder.com/400x300.png?text=Almond+Croissant">
+              <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='300'><rect width='100%25' height='100%25' fill='%23d9d9d9'/></svg>" alt="">
+              <h4>Almond Croissant</h4>
+              <div class="item-price">₹ 160</div>
+              <div class="item-actions"><button class="add-btn">Add</button></div>
+            </div>
+
+            <div class="item-card" data-sku="berry-tart" data-name="Berry Tart" data-price="240" data-img="https://via.placeholder.com/400x300.png?text=Berry+Tart">
+              <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='300'><rect width='100%25' height='100%25' fill='%23d9d9d9'/></svg>" alt="">
+              <h4>Berry Tart</h4>
+              <div class="item-price">₹ 240</div>
+              <div class="item-actions"><button class="add-btn">Add</button></div>
+            </div>
+
+            <div class="item-card" data-sku="lemon-slice" data-name="Lemon Slice" data-price="110" data-img="https://via.placeholder.com/400x300.png?text=Lemon+Slice">
+              <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='300'><rect width='100%25' height='100%25' fill='%23d9d9d9'/></svg>" alt="">
+              <h4>Lemon Slice</h4>
+              <div class="item-price">₹ 110</div>
+              <div class="item-actions"><button class="add-btn">Add</button></div>
+            </div>
+
+            <div class="item-card" data-sku="puff-pastry" data-name="Puff Pastry" data-price="95" data-img="https://via.placeholder.com/400x300.png?text=Puff+Pastry">
+              <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='300'><rect width='100%25' height='100%25' fill='%23d9d9d9'/></svg>" alt="">
+              <h4>Puff Pastry</h4>
+              <div class="item-price">₹ 95</div>
+              <div class="item-actions"><button class="add-btn">Add</button></div>
+            </div>
+
+            <div class="item-card" data-sku="custard-apple" data-name="Custard Apple Pastry" data-price="130" data-img="https://via.placeholder.com/400x300.png?text=Custard+Apple">
+              <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='300'><rect width='100%25' height='100%25' fill='%23d9d9d9'/></svg>" alt="">
+              <h4>Custard Apple Pastry</h4>
+              <div class="item-price">₹ 130</div>
+              <div class="item-actions"><button class="add-btn">Add</button></div>
+            </div>
+
+            <div class="item-card" data-sku="maple-danish" data-name="Maple Danish" data-price="140" data-img="https://via.placeholder.com/400x300.png?text=Maple+Danish">
+              <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='300'><rect width='100%25' height='100%25' fill='%23d9d9d9'/></svg>" alt="">
+              <h4>Maple Danish</h4>
+              <div class="item-price">₹ 140</div>
+              <div class="item-actions"><button class="add-btn">Add</button></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CAKES -->
+        <div id="cakes" class="category-section">
+          <h3 class="category-title">Cakes</h3>
+          <div class="items-grid">
+            <div class="item-card" data-sku="mawa-cake" data-name="Signature Mawa Cake" data-price="420" data-img="https://via.placeholder.com/400x300.png?text=Mawa+Cake">
+              <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='300'><rect width='100%25' height='100%25' fill='%23d9d9d9'/></svg>" alt="">
+              <h4>Signature Mawa Cake</h4>
+              <div class="item-price">₹ 420</div>
+              <div class="item-actions"><button class="add-btn">Add</button></div>
+            </div>
+
+            <div class="item-card" data-sku="black-forest" data-name="Black Forest" data-price="450" data-img="https://via.placeholder.com/400x300.png?text=Black+Forest">
+              <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='300'><rect width='100%25' height='100%25' fill='%23d9d9d9'/></svg>" alt="">
+              <h4>Black Forest</h4>
+              <div class="item-price">₹ 450</div>
+              <div class="item-actions"><button class="add-btn">Add</button></div>
+            </div>
+
+            <div class="item-card" data-sku="choco-truffle" data-name="Chocolate Truffle" data-price="480" data-img="https://via.placeholder.com/400x300.png?text=Choco+Truffle">
+              <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='300'><rect width='100%25' height='100%25' fill='%23d9d9d9'/></svg>" alt="">
+              <h4>Chocolate Truffle</h4>
+              <div class="item-price">₹ 480</div>
+              <div class="item-actions"><button class="add-btn">Add</button></div>
+            </div>
+
+            <div class="item-card" data-sku="red-velvet" data-name="Red Velvet" data-price="460" data-img="https://via.placeholder.com/400x300.png?text=Red+Velvet">
+              <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='300'><rect width='100%25' height='100%25' fill='%23d9d9d9'/></svg>" alt="">
+              <h4>Red Velvet</h4>
+              <div class="item-price">₹ 460</div>
+              <div class="item-actions"><button class="add-btn">Add</button></div>
+            </div>
+
+            <div class="item-card" data-sku="mango-mousse" data-name="Mango Mousse" data-price="520" data-img="https://via.placeholder.com/400x300.png?text=Mango+Mousse">
+              <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='300'><rect width='100%25' height='100%25' fill='%23d9d9d9'/></svg>" alt="">
+              <h4>Mango Mousse</h4>
+              <div class="item-price">₹ 520</div>
+              <div class="item-actions"><button class="add-btn">Add</button></div>
+            </div>
+
+            <div class="item-card" data-sku="vanilla-sponge" data-name="Vanilla Sponge" data-price="380" data-img="https://via.placeholder.com/400x300.png?text=Vanilla+Sponge">
+              <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='300'><rect width='100%25' height='100%25' fill='%23d9d9d9'/></svg>" alt="">
+              <h4>Vanilla Sponge</h4>
+              <div class="item-price">₹ 380</div>
+              <div class="item-actions"><button class="add-btn">Add</button></div>
+            </div>
+
+            <div class="item-card" data-sku="butterscotch" data-name="Butterscotch" data-price="400" data-img="https://via.placeholder.com/400x300.png?text=Butterscotch">
+              <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='300'><rect width='100%25' height='100%25' fill='%23d9d9d9'/></svg>" alt="">
+              <h4>Butterscotch</h4>
+              <div class="item-price">₹ 400</div>
+              <div class="item-actions"><button class="add-btn">Add</button></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- COOKIES -->
+        <div id="cookies" class="category-section">
+          <h3 class="category-title">Cookies</h3>
+          <div class="items-grid">
+            <div class="item-card" data-sku="butter-cookie" data-name="Butter Cookie" data-price="35" data-img="https://via.placeholder.com/400x300.png?text=Butter+Cookie">
+              <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='300'><rect width='100%25' height='100%25' fill='%23d9d9d9'/></svg>" alt="">
+              <h4>Butter Cookie</h4>
+              <div class="item-price">₹ 35</div>
+              <div class="item-actions"><button class="add-btn">Add</button></div>
+            </div>
+
+            <div class="item-card" data-sku="choco-chip" data-name="Chocolate Chip" data-price="45" data-img="https://via.placeholder.com/400x300.png?text=Choco+Chip">
+              <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='300'><rect width='100%25' height='100%25' fill='%23d9d9d9'/></svg>" alt="">
+              <h4>Chocolate Chip</h4>
+              <div class="item-price">₹ 45</div>
+              <div class="item-actions"><button class="add-btn">Add</button></div>
+            </div>
+
+            <div class="item-card" data-sku="oat-raisins" data-name="Oat & Raisin" data-price="50" data-img="https://via.placeholder.com/400x300.png?text=Oat+Raisin">
+              <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='300'><rect width='100%25' height='100%25' fill='%23d9d9d9'/></svg>" alt="">
+              <h4>Oat & Raisin</h4>
+              <div class="item-price">₹ 50</div>
+              <div class="item-actions"><button class="add-btn">Add</button></div>
+            </div>
+
+            <div class="item-card" data-sku="almond-cookie" data-name="Almond Cookie" data-price="60" data-img="https://via.placeholder.com/400x300.png?text=Almond+Cookie">
+              <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='300'><rect width='100%25' height='100%25' fill='%23d9d9d9'/></svg>" alt="">
+              <h4>Almond Cookie</h4>
+              <div class="item-price">₹ 60</div>
+              <div class="item-actions"><button class="add-btn">Add</button></div>
+            </div>
+
+            </div>
+        </div>
+
+        
+        <div id="breads" class="category-section">
+          <h3 class="category-title">Breads</h3>
+          <div class="items-grid">
+            <div class="item-card" data-sku="brown-bread" data-name="Brown Bread" data-price="70" data-img="https://via.placeholder.com/400x300.png?text=Brown+Bread">
+              <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='300'><rect width='100%25' height='100%25' fill='%23d9d9d9'/></svg>" alt="">
+              <h4>Brown Bread</h4>
+              <div class="item-price">₹ 70</div>
+              <div class="item-actions"><button class="add-btn">Add</button></div>
+            </div>
+
+            <div class="item-card" data-sku="garlic-bread" data-name="Garlic Bread" data-price="120" data-img="https://via.placeholder.com/400x300.png?text=Garlic+Bread">
+              <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='300'><rect width='100%25' height='100%25' fill='%23d9d9d9'/></svg>" alt="">
+              <h4>Garlic Bread</h4>
+              <div class="item-price">₹ 120</div>
+              <div class="item-actions"><button class="add-btn">Add</button></div>
+            </div>
+
+            <div class="item-card" data-sku="ciabatta" data-name="Ciabatta" data-price="180" data-img="https://via.placeholder.com/400x300.png?text=Ciabatta">
+              <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='300'><rect width='100%25' height='100%25' fill='%23d9d9d9'/></svg>" alt="">
+              <h4>Ciabatta</h4>
+              <div class="item-price">₹ 180</div>
+              <div class="item-actions"><button class="add-btn">Add</button></div>
+            </div>
+
+            <div class="item-card" data-sku="baguette" data-name="Baguette" data-price="140" data-img="https://via.placeholder.com/400x300.png?text=Baguette">
+              <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='300'><rect width='100%25' height='100%25' fill='%23d9d9d9'/></svg>" alt="">
+              <h4>Baguette</h4>
+              <div class="item-price">₹ 140</div>
+              <div class="item-actions"><button class="add-btn">Add</button></div>
+            </div>
+
+            <div class="item-card" data-sku="pav" data-name="Bombay Pav" data-price="40" data-img="https://via.placeholder.com/400x300.png?text=Bombay+Pav">
+              <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='300'><rect width='100%25' height='100%25' fill='%23d9d9d9'/></svg>" alt="">
+              <h4>Bombay Pav</h4>
+              <div class="item-price">₹ 40</div>
+              <div class="item-actions"><button class="add-btn">Add</button></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SAVORIES -->
+        <div id="savories" class="category-section">
+          <h3 class="category-title">Savories</h3>
+          <div class="items-grid">
+            <div class="item-card" data-sku="keema-bun" data-name="Keema Bun" data-price="85" data-img="https://via.placeholder.com/400x300.png?text=Keema+Bun">
+              <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='300'><rect width='100%25' height='100%25' fill='%23d9d9d9'/></svg>" alt="">
+              <h4>Keema Bun</h4>
+              <div class="item-price">₹ 85</div>
+              <div class="item-actions"><button class="add-btn">Add</button></div>
+            </div>
+
+            <div class="item-card" data-sku="veg-patties" data-name="Veg Patties" data-price="55" data-img="https://via.placeholder.com/400x300.png?text=Veg+Patties">
+              <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='300'><rect width='100%25' height='100%25' fill='%23d9d9d9'/></svg>" alt="">
+              <h4>Veg Patties</h4>
+              <div class="item-price">₹ 55</div>
+              <div class="item-actions"><button class="add-btn">Add</button></div>
+            </div>
+
+            <div class="item-card" data-sku="cheese-scroll" data-name="Cheese Scroll" data-price="95" data-img="https://via.placeholder.com/400x300.png?text=Cheese+Scroll">
+              <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='300'><rect width='100%25' height='100%25' fill='%23d9d9d9'/></svg>" alt="">
+              <h4>Cheese Scroll</h4>
+              <div class="item-price">₹ 95</div>
+              <div class="item-actions"><button class="add-btn">Add</button></div>
+            </div>
+
+            <div class="item-card" data-sku="puff-samosa" data-name="Puff Samosa" data-price="60" data-img="https://via.placeholder.com/400x300.png?text=Puff+Samosa">
+              <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='300'><rect width='100%25' height='100%25' fill='%23d9d9d9'/></svg>" alt="">
+              <h4>Puff Samosa</h4>
+              <div class="item-price">₹ 60</div>
+              <div class="item-actions"><button class="add-btn">Add</button></div>
+            </div>
+
+            <div class="item-card" data-sku="paneer-roll" data-name="Paneer Roll" data-price="110" data-img="https://via.placeholder.com/400x300.png?text=Paneer+Roll">
+              <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='300'><rect width='100%25' height='100%25' fill='%23d9d9d9'/></svg>" alt="">
+              <h4>Paneer Roll</h4>
+              <div class="item-price">₹ 110</div>
+              <div class="item-actions"><button class="add-btn">Add</button></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- BEVERAGES -->
+        <div id="beverages" class="category-section">
+          <h3 class="category-title">Beverages</h3>
+          <div class="items-grid">
+            <div class="item-card" data-sku="filter-coffee" data-name="Filter Coffee" data-price="60" data-img="https://via.placeholder.com/400x300.png?text=Filter+Coffee">
+              <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='300'><rect width='100%25' height='100%25' fill='%23d9d9d9'/></svg>" alt="">
+              <h4>Filter Coffee</h4>
+              <div class="item-price">₹ 60</div>
+              <div class="item-actions"><button class="add-btn">Add</button></div>
+            </div>
+
+            <div class="item-card" data-sku="chai" data-name="Chai" data-price="30" data-img="https://via.placeholder.com/400x300.png?text=Chai">
+              <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='300'><rect width='100%25' height='100%25' fill='%23d9d9d9'/></svg>" alt="">
+              <h4>Chai</h4>
+              <div class="item-price">₹ 30</div>
+              <div class="item-actions"><button class="add-btn">Add</button></div>
+            </div>
+
+            <div class="item-card" data-sku="cold-coffee" data-name="Cold Coffee" data-price="140" data-img="https://via.placeholder.com/400x300.png?text=Cold+Coffee">
+              <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='300'><rect width='100%25' height='100%25' fill='%23d9d9d9'/></svg>" alt="">
+              <h4>Cold Coffee</h4>
+              <div class="item-price">₹ 140</div>
+              <div class="item-actions"><button class="add-btn">Add</button></div>
+            </div>
+
+            <div class="item-card" data-sku="mango-lassi" data-name="Mango Lassi" data-price="120" data-img="https://via.placeholder.com/400x300.png?text=Mango+Lassi">
+              <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='300'><rect width='100%25' height='100%25' fill='%23d9d9d9'/></svg>" alt="">
+              <h4>Mango Lassi</h4>
+              <div class="item-price">₹ 120</div>
+              <div class="item-actions"><button class="add-btn">Add</button></div>
+            </div>
+
+            <div class="item-card" data-sku="fresh-juice" data-name="Fresh Juice" data-price="110" data-img="https://via.placeholder.com/400x300.png?text=Fresh+Juice">
+              <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='300'><rect width='100%25' height='100%25' fill='%23d9d9d9'/></svg>" alt="">
+              <h4>Fresh Juice</h4>
+              <div class="item-price">₹ 110</div>
+              <div class="item-actions"><button class="add-btn">Add</button></div>
+            </div>
+          </div>
+        </div>
+
+      </section>
+    </div>
+
+    <footer id="contact" id="contact" id="contact" id="contact" id="contact" id="contact"
+        style="
+          background: var(--accent);
+          padding: 60px 0;
+          margin-top: 40px;
+          color: white;
+        "
+      >
+        <div style="max-width: 1150px; margin: 0 auto; padding: 0 20px">
+          <!-- Top row: heading (left) + large image (right) -->
+          <div
+            style="
+              display: flex;
+              gap: 28px;
+              align-items: center;
+              justify-content: space-between;
+              flex-wrap: wrap;
+            "
+          >
+            <div style="flex: 0 1 520px">
+              <h2
+                style="
+                  font-size: 48px;
+                  font-weight: 900;
+                  line-height: 1.05;
+                  margin: 0 0 12px 0;
+                  color: white;
+                  max-width: 520px;
+                "
+              >
+                WHERE EVERY TREAT IS A LITTLE<br />SLICE OF HEAVEN
+              </h2>
+            </div>
+
+            <div
+              style="
+                flex: 1 1 360px;
+                min-width: 260px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+              "
+            >
+              <div
+                style="
+                  width: 100%;
+                  height: 140px;
+                  background: rgba(255, 255, 255, 0.18);
+                  border-radius: 12px;
+                  overflow: hidden;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                "
+              >
+                <img
+                  src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='300'><rect width='100%25' height='100%25' fill='%23d9d9d9'/></svg>"
+                  style="
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                    opacity: 0.95;
+                  "
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- Bottom row: left (About + Explore) and right (Follow + socials) -->
+          <div
+            style="
+              display: flex;
+              gap: 28px;
+              align-items: flex-start;
+              justify-content: space-between;
+              margin-top: 28px;
+              flex-wrap: wrap;
+            "
+          >
+            <div
+              style="
+                display: flex;
+                gap: 20px;
+                flex: 1 1 520px;
+                min-width: 260px;
+              "
+            >
+              <!-- About -->
+              <div style="flex: 1; background: transparent">
+                <h3
+                  style="
+                    font-weight: 900;
+                    color: #ffe3d9;
+                    margin-bottom: 10px;
+                    font-size: 18px;
+                  "
+                >
+                  About Us
+                </h3>
+                <p style="margin: 4px 0; color: white; font-size: 14px"></p>
+                <p style="margin: 4px 0; color: white; font-size: 14px">
+                  eatsweet@bakery
+                </p>
+                <p style="margin: 4px 0; color: white; font-size: 14px">
+                  Mumbai
+                </p>
+              </div>
+
+              <!-- Explore -->
+              <div style="flex: 1; background: transparent">
+                <h3
+                  style="
+                    font-weight: 900;
+                    color: #ffe3d9;
+                    margin-bottom: 10px;
+                    font-size: 18px;
+                  "
+                >
+                  Explore
+                </h3>
+                <p style="margin: 4px 0; color: white; font-size: 14px">Home</p>
+                <p style="margin: 4px 0; color: white; font-size: 14px">
+                  Products
+                </p>
+                <p style="margin: 4px 0; color: white; font-size: 14px">
+                  Contact Us
+                </p>
+                <p style="margin: 4px 0; color: white; font-size: 14px">
+                  About Us
+                </p>
+              </div>
+            </div>
+
+            <!-- Follow Us -->
+            <div style="flex: 0 1 260px; min-width: 200px">
+              <h3
+                style="
+                  font-weight: 900;
+                  color: #ffe3d9;
+                  margin-bottom: 10px;
+                  font-size: 18px;
+                "
+              >
+                Follow us
+              </h3>
+              <div style="display: flex; gap: 14px; margin-top: 8px">
+                <div
+                  style="
+                    width: 38px;
+                    height: 38px;
+                    border-radius: 50%;
+                    background: white;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    cursor: pointer;
+                  "
+                >
+                  <span
+                    style="
+                      font-size: 20px;
+                      color: var(--accent);
+                      font-weight: 900;
+                    "
+                    >f</span
+                  >
+                </div>
+                <div
+                  style="
+                    width: 38px;
+                    height: 38px;
+                    border-radius: 50%;
+                    background: white;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    cursor: pointer;
+                  "
+                >
+                  <span
+                    style="
+                      font-size: 20px;
+                      color: var(--accent);
+                      font-weight: 900;
+                    "
+                    >p</span
+                  >
+                </div>
+                <div
+                  style="
+                    width: 38px;
+                    height: 38px;
+                    border-radius: 50%;
+                    background: white;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    cursor: pointer;
+                  "
+                >
+                  <span
+                    style="
+                      font-size: 20px;
+                      color: var(--accent);
+                      font-weight: 900;
+                    "
+                    >💬</span
+                  >
+                </div>
+                <div
+                  style="
+                    width: 38px;
+                    height: 38px;
+                    border-radius: 50%;
+                    background: white;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    cursor: pointer;
+                  "
+                >
+                  <span
+                    style="
+                      font-size: 20px;
+                      color: var(--accent);
+                      font-weight: 900;
+                    "
+                    >📸</span
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </footer>
+  </div>
+
+  <!-- CART DRAWER -->
+  <div id="cartDrawer" class="cart-drawer" aria-hidden="true">
+    <div class="drawer-header">
+      <div>Your Cart</div>
+      <button class="drawer-close" aria-label="Close cart" onclick="toggleCart()">✕</button>
+    </div>
+    <div id="cartItems" class="cart-items" aria-live="polite"></div>
+    <div class="cart-footer">
+      <div>Total</div>
+      <div id="cartTotal">₹ 0</div>
+      <div style="display:flex;gap:10px;margin-left:12px">
+        <button class="checkout-btn" onclick="checkout()">Checkout</button>
+        <button class="clear-btn" onclick="clearCart()">Clear</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Cart logic (synced with homepage behavior)
+    const CART_KEY = 'eatsweet_cart_v1';
+    let cartState = { items: {}, totalCount: 0, totalPrice: 0 };
+
+    function loadCart(){
+      try{ const raw = localStorage.getItem(CART_KEY); if(raw) cartState = JSON.parse(raw); }catch(e){console.warn('loadCart',e)}
+      computeTotals(); updateCartDisplay(); renderCart();
+    }
+    function saveCart(){ try{ localStorage.setItem(CART_KEY, JSON.stringify(cartState)); }catch(e){console.warn('saveCart',e)} }
+
+    function computeTotals(){ let t=0,c=0; Object.values(cartState.items).forEach(it=>{ t += (it.price||0)*it.count; c += it.count; }); cartState.totalPrice = t; cartState.totalCount = c; }
+    function updateCartDisplay(){ const el = document.getElementById('cartCount'); if(el) el.textContent = cartState.totalCount || 0; }
+
+    function setItemCount(sku,count,info){ count = Math.max(0, Math.floor(count)); if(count===0) delete cartState.items[sku]; else cartState.items[sku] = { count, price: info.price||0, title: info.name||info.title||sku, img: info.img||'' }; computeTotals(); saveCart(); updateCartDisplay(); renderCart(); refreshCardControls(); }
+    function incrementItem(sku,info){ const prev = cartState.items[sku]?.count || 0; setItemCount(sku, prev+1, info); }
+    function decrementItem(sku){ const prev = cartState.items[sku]?.count || 0; setItemCount(sku, prev-1, cartState.items[sku] || {}); }
+
+    function toggleCart(){ const d = document.getElementById('cartDrawer'); if(!d) return; const open = d.classList.toggle('open'); d.setAttribute('aria-hidden', (!open).toString()); if(open) renderCart(); }
+    function checkout(){ alert('Checkout — total ₹ ' + (cartState.totalPrice||0)); }
+    function clearCart(){ cartState.items = {}; cartState.totalCount = 0; cartState.totalPrice = 0; saveCart(); updateCartDisplay(); renderCart(); refreshCardControls(); }
+
+    function renderCart(){ const container = document.getElementById('cartItems'); container.innerHTML = ''; let total=0; Object.keys(cartState.items).forEach(sku=>{ const it = cartState.items[sku]; total += (it.price||0)*it.count; const row = document.createElement('div'); row.className = 'cart-item'; const img = document.createElement('img'); img.src = it.img || 'https://via.placeholder.com/72'; img.alt = it.title || sku; const meta = document.createElement('div'); meta.className = 'meta'; const title = document.createElement('div'); title.className = 'title'; title.textContent = it.title || sku; const price = document.createElement('div'); price.className = 'price'; price.textContent = '₹ ' + (it.price||0); meta.appendChild(title); meta.appendChild(price); const ctr = document.createElement('div'); ctr.className = 'controls'; const btnMinus = document.createElement('button'); btnMinus.textContent = '-'; btnMinus.className = 'qty-btn'; btnMinus.onclick = ()=> decrementItem(sku); const qty = document.createElement('div'); qty.textContent = it.count; qty.style.minWidth = '24px'; qty.style.textAlign = 'center'; qty.style.fontWeight = '900'; const btnPlus = document.createElement('button'); btnPlus.textContent = '+'; btnPlus.className = 'qty-btn'; btnPlus.onclick = ()=> incrementItem(sku, { price: it.price, name: it.title, img: it.img }); ctr.appendChild(btnMinus); ctr.appendChild(qty); ctr.appendChild(btnPlus); row.appendChild(img); row.appendChild(meta); row.appendChild(ctr); container.appendChild(row); }); document.getElementById('cartTotal').textContent = '₹ ' + (cartState.totalPrice || 0); }
+
+    function refreshCardControls(){
+      document.querySelectorAll('.item-card').forEach(card=>{
+        const sku = card.dataset.sku;
+        const info = {
+          name: card.dataset.name || (card.querySelector('h4')?.textContent || sku),
+          price: Number(card.dataset.price || (card.querySelector('.item-price')?.textContent.replace(/[^0-9.]/g,'')||0)),
+          img: card.dataset.img || (card.querySelector('img')?.src || '')
+        };
+        let actions = card.querySelector('.item-actions');
+        if(!actions){
+          actions = document.createElement('div');
+          actions.className = 'item-actions';
+          card.appendChild(actions);
+        }
+        actions.innerHTML = '';
+        const item = cartState.items[sku];
+        if(item){
+          const wrapper = document.createElement('div');
+          wrapper.className = 'qty-controls';
+          const minus = document.createElement('button'); minus.className = 'qty-btn'; minus.textContent = '-'; minus.onclick = ()=> decrementItem(sku);
+          const qty = document.createElement('div'); qty.textContent = item.count; qty.style.minWidth = '22px'; qty.style.textAlign = 'center'; qty.style.fontWeight = '800';
+          const plus = document.createElement('button'); plus.className = 'qty-btn'; plus.textContent = '+'; plus.onclick = ()=> incrementItem(sku, info);
+          wrapper.appendChild(minus); wrapper.appendChild(qty); wrapper.appendChild(plus);
+          actions.appendChild(wrapper);
+        } else {
+          const add = document.createElement('button'); add.className = 'add-btn'; add.textContent = 'Add'; add.onclick = ()=> incrementItem(sku, info);
+          actions.appendChild(add);
+        }
+      });
+    }
+
+    function wireCategoryNav(){
+      const buttons = Array.from(document.querySelectorAll('#catList button'));
+      const sections = buttons.map(b => document.getElementById(b.dataset.target));
+
+      buttons.forEach(b =>
+        b.addEventListener('click', () => {
+          buttons.forEach(x => x.classList.remove('active'));
+          b.classList.add('active');
+          const target = document.getElementById(b.dataset.target);
+          if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        })
+      );
+
+      window.addEventListener('scroll', () => {
+        const offset = window.scrollY + 140;
+        for (let i = sections.length - 1; i >= 0; i--) {
+          const s = sections[i];
+          if (!s) continue;
+          const top = s.getBoundingClientRect().top + window.scrollY;
+          if (offset >= top) {
+            buttons.forEach(x => x.classList.remove('active'));
+            if (buttons[i]) buttons[i].classList.add('active');
+            break;
+          }
+        }
+      }, { passive: true });
+    }
+
+    function wireAddDelegation(){
+      document.addEventListener('click', (e)=>{
+        const t = e.target;
+        if(!t || !t.classList) return;
+        if(t.classList.contains('add-btn')){
+          const card = t.closest('.item-card');
+          if(!card) return;
+          const sku = card.dataset.sku || ('item-'+Math.random().toString(36).slice(2,7));
+          const info = { name: card.dataset.name || (card.querySelector('h4')?.textContent||sku), price: Number(card.dataset.price|| (card.querySelector('.item-price')?.textContent.replace(/[^0-9.]/g,'')||0)), img: card.dataset.img || card.querySelector('img')?.src || '' };
+          incrementItem(sku, info);
+        }
+      });
+    }
+
+    function init(){
+      loadCart();
+      wireCategoryNav();
+      wireAddDelegation();
+      refreshCardControls();
+    }
+
+    if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
+  </script>
+  </body>
+  </html>
+</body>
+</html>
